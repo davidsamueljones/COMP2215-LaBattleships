@@ -8,6 +8,7 @@
 
 /* Default clear values for non-property values */
 #define SHIP_DEFAULTS .hits = 0, .x = 0, .y = 0, .dir = D_South
+#define move_x_y(x, y, dir) (move_x_y_n(x, y, dir, 1))
 
 /**
  * Enumeration of ship directions.
@@ -123,11 +124,14 @@ bool place_ship_valid(grid_t* grid, ship_t* ship);
 bool is_ship_destroyed(ship_t* ship);
 
 /**
- * Shift an x y coordinate in a given direction.
+ * Shift an x y coordinate in a given direction by a given amount.
+ * The macro move_x_y(x, y, dir) can be used to do a single shift.
+ * 
  * @param x   Pointer to x coordinate to shift
  * @param y   Pointer to y coordinate to shift
  * @param dir Direction in which to shift
+ * @param n   Amount by which to shift
  */
-void move_x_y(int8_t* x, int8_t* y, dir_t dir);
+void move_x_y_n(int8_t* x, int8_t* y, dir_t dir, uint8_t n);
 
 #endif // SHIP_H

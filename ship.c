@@ -116,21 +116,19 @@ bool is_ship_destroyed(ship_t* ship) {
     return ship->length == ship->hits;
 }
 
-void move_x_y(int8_t* x, int8_t* y, dir_t dir) {
+void move_x_y_n(int8_t* x, int8_t* y, dir_t dir, uint8_t n) {
     switch (dir) {
     case D_North:
-        *y -= 1;
+        *y -= n;
         break;
     case D_East:
-        *x += 1;
+        *x += n;
         break;
     case D_South:
-        *y += 1;
+        *y += n;
         break;
     case D_West:
-        *x -= 1;
+        *x -= n;
         break;
     }
 }
-
-
