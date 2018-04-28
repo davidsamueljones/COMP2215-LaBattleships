@@ -33,41 +33,39 @@ bool is_player_destroyed(player_t* player) {
 
 shot_res_t shoot_pos(player_t* target, int8_t x, int8_t y) {
     g_data data = get_grid_data(&target->grid, x, y);
-    //printf("Shooting: %d, %d - ", x, y);
     shot_res_t ret_code;
 
     if (data == BLOCKED_POS) {
-        //printf("Not valid position");
         ret_code = Invalid;
     } if (data & SHOT_POS) {
-        //printf("Already hit");
         ret_code = Invalid;
     } else {
+        // Mark shot
+        mark_shot(&target->grid, x, y);
 
         if (data != 0) {
+            // Do ship hit behaviour
             uint8_t idx = data - 1;
             target->ships[idx].hits++;
-            //printf("HIT");
             ret_code = Hit;
+            // Check if ship is also destroyed
             if (is_ship_destroyed(&target->ships[idx])) {
                 // TODO: This is a slight cheat, should be probabilistically marking confirmed
                 // destroy locations. This uses knowledge of where ships are but doesn't lend
                 // massive advantage. (FIXME)
-                int8_t x = target->ships[idx].x;
-                int8_t y = target->ships[idx].y;
+                int8_t x1 = target->ships[idx].x;
+                int8_t y1 = target->ships[idx].y;
                 for (uint8_t i = 0; i < target->ships[idx].length; i++) {
-                    set_grid_data(&target->grid, x, y,
-                                  (g_data) target->ships[idx].ref | DESTROY_POS);
-                    move_x_y(&x, &y, target->ships[idx].dir);
+                    mark_destroyed(&target->grid, x1, y1);
+                    move_x_y(&x1, &y1, target->ships[idx].dir);
                 }
                 //printf(" & DESTROYED");
                 ret_code = HitAndDestroyed;
             }
         } else {
             ret_code = Miss;
-            //printf("MISS");
         }
-        mark_shot(&target->grid, x, y);
+       
     }
     printf("\n");
     return ret_code;
