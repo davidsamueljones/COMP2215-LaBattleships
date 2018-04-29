@@ -14,6 +14,7 @@
 #include "lcd.h"
 
 lcd display;
+uint16_t start_x = 0;
 
 void init_lcd()
 {
@@ -200,10 +201,10 @@ void display_char(char c)
     /*   New line starts a new line, or if the end of the
          display has been reached, clears the display.
     */
-    if (c == '\n') { 
-        display.x=0; display.y+=8;
+    if (c == '\n') {
+        display.x = start_x;
+        display.y += 9;
         if (display.y >= display.height) { clear_screen(); }
-        return;
     }
 
     if (c < 32 || c > 126) return;
@@ -243,6 +244,7 @@ void display_string_xy(char *str, uint16_t x, uint16_t y)
     uint8_t i;
     display.x = x;
     display.y = y;
+    start_x = display.x;
     for(i=0; str[i]; i++)
         display_char(str[i]);
 }
