@@ -26,6 +26,7 @@ typedef struct {
     int8_t last_y;
     ship_t *ships;
     uint8_t ship_count;
+    bool cpu;
 } player_t;
 
 
