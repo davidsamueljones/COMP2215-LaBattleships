@@ -30,14 +30,6 @@ typedef struct {
 } grid_t;
 
 /**
- * Structure holding a single x y coordinate.
- */
-typedef struct {
-    uint8_t x;
-    uint8_t y;
-} pos_t;
-
-/**
  * Print the raw data state of the given grid.
  *
  * @param grid Pointer to grid that should be printed
