@@ -1,19 +1,18 @@
 #include <stdio.h>
 #include <stdbool.h>
-
+#include <stdlib.h>
 #include "player.h"
 
 player_t make_player(uint8_t width, uint8_t height, ship_t ships[], uint8_t ship_count) {
     // Create a grid for the player
     grid_t player_grid = {.width = width, .height = height};
     allocate_grid_data(&player_grid, true);
-
+    
     // Copy the ships for the player
-    ship_t player_ships[ship_count];
+    ship_t* player_ships = malloc(ship_count * sizeof(ship_t));
     for (uint8_t ship_idx=0; ship_idx < ship_count; ship_idx++) {
         player_ships[ship_idx] = ships[ship_idx];
     }
-
     // Create player
     player_t player = {
         .grid = player_grid, .ships = player_ships, .ship_count = ship_count
