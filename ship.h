@@ -10,7 +10,7 @@
 #define SHIP_DEFAULTS .hits = 0, .x = 0, .y = 0, .dir = D_South
 
 /* Wrapper macrocs for methods */
-#define place_ship_valid(grid, ship) (!validate_ship_place(grid, ship))
+#define place_ship_valid(grid, ship) (!validate_ship_position(grid, ship))
 #define move_x_y(x, y, dir) (move_x_y_n(x, y, dir, 1))
 
 /**
@@ -124,7 +124,7 @@ bool place_ship(grid_t* grid, ship_t* ship, bool verify);
  * @param  ship Ship configuration to check with
  * @return      Return code reflecting whether valid.
  */
-place_valid_t validate_ship_place(grid_t* grid, ship_t* ship);
+place_valid_t validate_ship_position(grid_t* grid, ship_t* ship);
 
 /**
  * Check if an input ship is in a destroyed state. A destroyed state is where the number of hits equals the

@@ -100,7 +100,7 @@ bool place_ship(grid_t* grid, ship_t* ship, bool verify) {
     return true;
 }
 
-place_valid_t validate_ship_place(grid_t* grid, ship_t* ship) {
+place_valid_t validate_ship_position(grid_t* grid, ship_t* ship) {
     int8_t x = ship->x;
     int8_t y = ship->y;
     for (uint8_t i = 0; i < ship->length; i++) {
