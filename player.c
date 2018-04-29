@@ -15,7 +15,8 @@ player_t make_player(uint8_t width, uint8_t height, ship_t ships[], uint8_t ship
     }
     // Create player
     player_t player = {
-        .grid = player_grid, .ships = player_ships, .ship_count = ship_count
+        .grid = player_grid, .ships = player_ships, .ship_count = ship_count,
+        .last_x = BLOCKED_POS, .last_y = BLOCKED_POS
     };
     return player;
 }

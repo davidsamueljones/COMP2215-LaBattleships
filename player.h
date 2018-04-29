@@ -22,6 +22,8 @@ typedef enum {
  */
 typedef struct {
     grid_t grid; // Grid with ships placed and enemy shots
+    int8_t last_x;
+    int8_t last_y;
     ship_t *ships;
     uint8_t ship_count;
 } player_t;
