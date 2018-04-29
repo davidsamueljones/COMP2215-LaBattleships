@@ -81,7 +81,7 @@ uint16_t gen_probability_grid(grid_t* target_grid, grid_t* prob_grid, ship_t shi
                             valid = false;
                             break;
                         } else if (IS_HIT(data)) {
-                            weight += 20;
+                            weight *= 10;
                         }
                         move_x_y(&x, &y, ship.dir);
                     }
