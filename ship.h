@@ -8,6 +8,9 @@
 
 /* Default clear values for non-property values */
 #define SHIP_DEFAULTS .hits = 0, .x = 0, .y = 0, .dir = D_South
+
+/* Wrapper macrocs for methods */
+#define place_ship_valid(grid, ship) (!validate_ship_place(grid, ship))
 #define move_x_y(x, y, dir) (move_x_y_n(x, y, dir, 1))
 
 /**
@@ -33,6 +36,15 @@ typedef struct {
     uint8_t length;
     uint8_t hits;
 } ship_t;
+
+/**
+ * Enumeration of placement validation results.
+ */
+typedef enum {
+    PlaceValid,
+    OffGrid,
+    Overlap
+} place_valid_t;
 
 /**
  * Print the states of the given ship list.
@@ -110,9 +122,9 @@ bool place_ship(grid_t* grid, ship_t* ship, bool verify);
  *
  * @param  grid Grid configuration to check on
  * @param  ship Ship configuration to check with
- * @return      Whether placement is valid
+ * @return      Return code reflecting whether valid.
  */
-bool place_ship_valid(grid_t* grid, ship_t* ship);
+place_valid_t validate_ship_place(grid_t* grid, ship_t* ship);
 
 /**
  * Check if an input ship is in a destroyed state. A destroyed state is where the number of hits equals the

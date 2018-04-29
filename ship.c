@@ -100,16 +100,19 @@ bool place_ship(grid_t* grid, ship_t* ship, bool verify) {
     return true;
 }
 
-bool place_ship_valid(grid_t* grid, ship_t* ship) {
+place_valid_t validate_ship_place(grid_t* grid, ship_t* ship) {
     int8_t x = ship->x;
     int8_t y = ship->y;
     for (uint8_t i = 0; i < ship->length; i++) {
-        if (get_grid_data(grid, x, y) != EMPTY_POS) {
-            return false;
-        };
+        g_data data = get_grid_data(grid, x, y);
+        if (data == BLOCKED_POS) {
+            return OffGrid;
+        } else if (data & POS_DATA) {
+            return Overlap;
+        }
         move_x_y(&x, &y, ship->dir);
     }
-    return true;
+    return PlaceValid;
 }
 
 bool is_ship_destroyed(ship_t* ship) {
