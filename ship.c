@@ -97,6 +97,7 @@ bool place_ship(grid_t* grid, ship_t* ship, bool verify) {
         set_grid_data(grid, x, y, (g_data) ship->ref);
         move_x_y(&x, &y, ship->dir);
     }
+    ship->placed = true;
     return true;
 }
 

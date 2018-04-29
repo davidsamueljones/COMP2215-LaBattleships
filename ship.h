@@ -7,7 +7,7 @@
 #include "grid.h"
 
 /* Default clear values for non-property values */
-#define SHIP_DEFAULTS .hits = 0, .x = BLOCKED_POS, .y = BLOCKED_POS, .dir = D_South
+#define SHIP_DEFAULTS .hits = 0, .x = 0, .y = 0, .dir = D_South, .placed = false
 
 /* Wrapper macrocs for methods */
 #define place_ship_valid(grid, ship) (!validate_ship_position(grid, ship))
@@ -35,6 +35,7 @@ typedef struct {
     dir_t dir;
     uint8_t length;
     uint8_t hits;
+    bool placed;
 } ship_t;
 
 /**
