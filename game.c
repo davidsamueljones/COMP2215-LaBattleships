@@ -24,10 +24,32 @@ game_t make_default_game(void) {
 
     // Create game
     game_t game = {
-        .shots = 0, 
+        .shots = 0,
         .player_one = make_player(width, height, ships, ship_count),
         .player_two = make_player(width, height, ships, ship_count)
     };
 
     return game;
+}
+
+player_t* get_current_player(game_t* game) {
+    switch (get_cur_player_idx(game)) {
+    case (PLAYER_ONE):
+        return &game->player_one;
+    case (PLAYER_TWO):
+        return &game->player_two;
+    default:
+        return NULL;
+    }
+}
+
+player_t* get_other_player(game_t* game) {
+    switch (get_cur_player_idx(game)) {
+    case (PLAYER_ONE):
+        return &game->player_two;
+    case (PLAYER_TWO):
+        return &game->player_one;
+    default:
+        return NULL;
+    }
 }
