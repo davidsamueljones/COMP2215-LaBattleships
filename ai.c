@@ -24,7 +24,6 @@ bool make_weighted_shot(player_t* target) {
                 }
                 if (ongoing == shot) {
                     shoot_pos(target, x, y);
-                    printf("SHOT\n");
                     free(prob_grid.data);
                     return true;
                 }
@@ -32,7 +31,6 @@ bool make_weighted_shot(player_t* target) {
         }
     }
     free(prob_grid.data);
-    printf("NO SHOT\n");
     return false;
 }
 
@@ -83,7 +81,7 @@ uint16_t gen_probability_grid(grid_t* target_grid, grid_t* prob_grid, ship_t shi
                             valid = false;
                             break;
                         } else if (IS_HIT(data)) {
-                            weight += 5;
+                            weight += 20;
                         }
                         move_x_y(&x, &y, ship.dir);
                     }
