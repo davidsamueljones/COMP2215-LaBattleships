@@ -8,6 +8,7 @@
 
 /* Default clear values for non-property values */
 #define SHIP_DEFAULTS .hits = 0, .x = 0, .y = 0, .dir = D_South, .placed = false
+#define NO_DIR (0xFF)
 
 /* Wrapper macrocs for methods */
 #define place_ship_valid(grid, ship) (!validate_ship_position(grid, ship))
