@@ -1,5 +1,5 @@
-#ifndef UI_DRAWING_H
-#define UI_DRAWING_H
+#ifndef GRID_DRAWING_H
+#define GRID_DRAWING_H
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -154,4 +154,4 @@ void draw_ship_selection(grid_t* grid, ship_t* ship, draw_props_t* draw_props, u
  */
 void clear_ship_selection(player_t* player, ship_t* cur_ship, draw_props_t* draw_props);
 
-#endif // UI_DRAWING_H
+#endif // GRID_DRAWING_H
