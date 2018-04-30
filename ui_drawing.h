@@ -21,6 +21,15 @@
 #define MESSAGE_BOX_BG (0x2124)
 #define MESSAGE_BOX_FG (0xFFFF)
 
+extern rectangle header;
+extern rectangle footer;
+
+/**
+ * Initialise UI drawing. This ensures sizing of elements such as the header and footer
+ * adjust correctly to the screen.
+ */
+void init_ui_drawing(void);
+
 /**
  * Draw the full game state. This is a full redraw so is not suggested for minor updates.
  * The game state is defined the current player's shot grid positioned on 'Grid 2' and
@@ -29,25 +38,22 @@
  * @param game              Game to draw the state of.
  * @param grid_1_draw_props Sizing constraints for 'Grid 1'
  * @param grid_2_draw_props Sizing constraints for 'Grid 2'
- * @param header            Size and position of header
- * @param footer            Size and position of footer
  */
-void draw_game_state(game_t* game, draw_props_t* grid_1_draw_props, 
-    draw_props_t* grid_2_draw_props, rectangle* header, rectangle* footer);
+void draw_game_state(game_t* game, draw_props_t* grid_1_draw_props, draw_props_t* grid_2_draw_props);
 
 /**
  * Draw a box for the header. Exceeds provided bounds by 1px South.
  * 
  * @param rec Size and position of box.
  */
-void draw_header(rectangle* rec);
+void draw_header();
 
 /**
  * Draw a box for the footer. Exceeds provided bounds by 1px North.
  * 
  * @param rec Size and position of box.
  */
-void draw_footer(rectangle* rec);
+void draw_footer();
 
 /**
  * Write the current player description for the given player in the header.
