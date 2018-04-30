@@ -42,6 +42,13 @@ typedef struct {
 player_t make_player(uint8_t width, uint8_t height, ship_t ships[], uint8_t ship_count);
 
 /**
+ * Free all memory used by player, this will stop the player being usable.
+ *
+ * @param player Player for which to free
+ */
+void free_player(player_t* player);
+
+/**
  * Check if all player's ships are destroyed.
  * 
  * @param  player Player to check

@@ -21,6 +21,10 @@ player_t make_player(uint8_t width, uint8_t height, ship_t ships[], uint8_t ship
     return player;
 }
 
+void free_player(player_t* player) {
+    free(&player->grid);
+    free(&player->ships);
+}
 
 bool is_player_destroyed(player_t* player) {
     bool destroyed = true;
