@@ -62,4 +62,8 @@ void draw_footer();
  */
 void write_current_player(uint8_t player);
 
+void generate_two_grid_view(draw_props_t* grid_1, draw_props_t* grid_2, double weight);
+
+void generate_one_grid_view(draw_props_t* grid);
+
 #endif // UI_DRAWING_H
