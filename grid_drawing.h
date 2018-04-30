@@ -9,6 +9,8 @@
 #include "player.h"
 
 /* Colour definitions */
+#define TEXT_COL       (0xFFFF)
+
 #define MISS_COLOUR_BG (0xFFFF)
 #define MISS_COLOUR_FG (0xF79E)
 #define HIT_COLOUR_BG  (0xF000)
@@ -21,16 +23,10 @@
 #define INVALID_SEL    (0xF800)
 #define GRID_BORDER    (0xEF5D)
 
-#define MESSAGE_BOX_BG (0x2124)
-#define MESSAGE_BOX_FG (0xFFFF)
-
-#define TEXT_COL       (0xFFFF)
-#define PLAYER_ONE_COL (0x01FF)
-#define PLAYER_TWO_COL (0xF800)
-
 /* Drawing constants */
 #define FONT_WIDTH  (5)
 #define FONT_HEIGHT (7)
+#define LINE_FEED_HEIGHT (9)
 
 #define TITLE_HEIGHT (FONT_HEIGHT * 1.5)
 
