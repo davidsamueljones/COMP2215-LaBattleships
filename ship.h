@@ -15,7 +15,7 @@
 #define move_x_y(x, y, dir) (move_x_y_n(x, y, dir, 1))
 
 /**
- * Enumeration of ship directions.
+ * Enumeration of directions.
  */
 typedef enum {
     D_North,

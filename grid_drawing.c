@@ -63,7 +63,7 @@ void draw_grid(grid_t* grid, draw_props_t* draw_props) {
 
 void draw_shot_overlay(grid_t* grid, draw_props_t* draw_props) {
     for (int8_t y = 0; y < grid->height; y++) {
-        for (int8_t x = 0; x < grid->height; x++) {
+        for (int8_t x = 0; x < grid->width; x++) {
             draw_shot(grid, x, y, draw_props);
         }
     } 
@@ -154,18 +154,18 @@ void draw_selection(grid_t* grid, int8_t x, int8_t y, draw_props_t* draw_props, 
 
 
 void clear_selection(player_t* player, int8_t x, int8_t y, draw_props_t* draw_props) {
-    draw_selection(&player->grid, x, y, draw_props, GRID_BORDER);
-    
+    draw_selection(player->grid, x, y, draw_props, GRID_BORDER);
+    draw_shot_overlay(player->grid, draw_props);
     // Ships must be redrawn if selection is drawn over them
-    g_data sel_data = get_grid_data(&player->grid, x, y);
+    g_data sel_data = get_grid_data(player->grid, x, y);
     int8_t ship_idx = (sel_data & POS_DATA) - 1;
     if (ship_idx >= 0) {
         ship_t* ship = &player->ships[ship_idx];
-        draw_ship(&player->grid, ship, draw_props);
+        draw_ship(player->grid, ship, draw_props);
         int8_t ship_x = ship->x;
         int8_t ship_y = ship->y;
         for (uint8_t i = 0; i < ship->length; i++) {
-            draw_shot(&player->grid, ship_x, ship_y, draw_props);
+            draw_shot(player->grid, ship_x, ship_y, draw_props);
             move_x_y(&ship_x, &ship_y, ship->dir);
         }
     }
@@ -184,9 +184,9 @@ void draw_ship_selection(grid_t* grid, ship_t* ship, draw_props_t* draw_props, u
 
 
 void clear_ship_selection(player_t* player, ship_t* cur_ship, draw_props_t* draw_props) {
-    draw_ship_selection(&player->grid, cur_ship, draw_props, GRID_BORDER);
-    draw_ships(&player->grid, player->ships, player->ship_count, draw_props);
-    draw_shot_overlay(&player->grid, draw_props);
+    draw_ship_selection(player->grid, cur_ship, draw_props, GRID_BORDER);
+    draw_ships(player->grid, player->ships, player->ship_count, draw_props);
+    draw_shot_overlay(player->grid, draw_props);
 }
 
 /**

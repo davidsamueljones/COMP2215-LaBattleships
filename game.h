@@ -17,18 +17,25 @@
  */
 typedef struct {
     uint8_t shots;
-    player_t player_one;
-    player_t player_two;
+    player_t* player_one;
+    player_t* player_two;
 } game_t;
 
 
 /**
- * Make a new game using defaults.
+ * Update the current game with a copy of the defaults.
  * 
- * @return  Generated game
+ * @param game Pointer to game to update
  */
-game_t make_default_game(void);
+void make_default_game(game_t* game);
 
+
+/**
+ * Free all memory used by a game, this will stop the game being usable.
+ *
+ * @param game Game for which to free
+ */
+void free_game(game_t* game);
 
 player_t* get_current_player(game_t* game);
 player_t* get_other_player(game_t* game);

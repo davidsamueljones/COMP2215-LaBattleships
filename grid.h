@@ -24,9 +24,9 @@ typedef int16_t g_data;
  * to its grid/width.
  */
 typedef struct {
-    g_data* data;
     uint8_t width;
     uint8_t height;
+    g_data* data;
 } grid_t;
 
 /**

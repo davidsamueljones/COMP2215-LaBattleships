@@ -3,28 +3,34 @@
 #include <stdlib.h>
 #include "player.h"
 
-player_t make_player(uint8_t width, uint8_t height, ship_t ships[], uint8_t ship_count) {
+void make_player(player_t* player, uint8_t width, uint8_t height, ship_t ships[], uint8_t ship_count) {
     // Create a grid for the player
-    grid_t player_grid = {.width = width, .height = height};
-    allocate_grid_data(&player_grid, true);
-    
+    grid_t* player_grid = malloc(sizeof(player_grid));
+    player_grid->width = width;
+    player_grid->height = height;
+
+    allocate_grid_data(player_grid, true);
+
     // Copy the ships for the player
     ship_t* player_ships = malloc(ship_count * sizeof(ship_t));
     for (uint8_t ship_idx=0; ship_idx < ship_count; ship_idx++) {
         player_ships[ship_idx] = ships[ship_idx];
     }
     // Create player
-    player_t player = {
-        .grid = player_grid, .ships = player_ships, .ship_count = ship_count,
-        .last_x = BLOCKED_POS, .last_y = BLOCKED_POS, .cpu = false
-    };
-    return player;
+    player->grid = player_grid;
+    player->ships = player_ships;
+    player->ship_count = ship_count;
+    player->last_x = BLOCKED_POS;
+    player->last_y = BLOCKED_POS;
 }
 
+
 void free_player(player_t* player) {
-    free(&player->grid);
-    free(&player->ships);
+    free(player->grid);
+    free(player->grid->data);
+    free(player->ships);
 }
+
 
 bool is_player_destroyed(player_t* player) {
     bool destroyed = true;
@@ -36,7 +42,7 @@ bool is_player_destroyed(player_t* player) {
 
 
 shot_res_t shoot_pos(player_t* target, int8_t x, int8_t y) {
-    g_data data = get_grid_data(&target->grid, x, y);
+    g_data data = get_grid_data(target->grid, x, y);
     shot_res_t ret_code;
 
     if (data == BLOCKED_POS) {
@@ -45,7 +51,7 @@ shot_res_t shoot_pos(player_t* target, int8_t x, int8_t y) {
         ret_code = Invalid;
     } else {
         // Mark shot
-        mark_shot(&target->grid, x, y);
+        mark_shot(target->grid, x, y);
 
         if (data != 0) {
             // Do ship hit behaviour
@@ -60,10 +66,9 @@ shot_res_t shoot_pos(player_t* target, int8_t x, int8_t y) {
                 int8_t x1 = target->ships[idx].x;
                 int8_t y1 = target->ships[idx].y;
                 for (uint8_t i = 0; i < target->ships[idx].length; i++) {
-                    mark_destroyed(&target->grid, x1, y1);
+                    mark_destroyed(target->grid, x1, y1);
                     move_x_y(&x1, &y1, target->ships[idx].dir);
                 }
-                //printf(" & DESTROYED");
                 ret_code = HitAndDestroyed;
             }
         } else {

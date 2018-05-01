@@ -6,9 +6,9 @@
 
 bool make_weighted_shot(player_t* target) {
     // Generate probability grid for state
-    grid_t prob_grid = {.width = target->grid.width, .height = target->grid.height};
+    grid_t prob_grid = {.width = target->grid->width, .height = target->grid->height};
     allocate_grid_data(&prob_grid, false);
-    gen_probability_grid(&target->grid, &prob_grid, target->ships, target->ship_count);
+    gen_probability_grid(target->grid, &prob_grid, target->ships, target->ship_count);
 
     // Determine optimal shot
     int16_t max;
@@ -17,13 +17,15 @@ bool make_weighted_shot(player_t* target) {
         // Shoot at the highest probability square (randomly if multiple have max)
         uint16_t ongoing = 0;
         uint16_t shot = 1 + rand() % occurrence;
-        for (int8_t x = 0; x < target->grid.width; x++) {
-            for (int8_t y = 0; y < target->grid.height; y++) {
+        for (int8_t x = 0; x < target->grid->width; x++) {
+            for (int8_t y = 0; y < target->grid->height; y++) {
                 if (get_grid_data(&prob_grid, x, y) == max) {
                     ongoing++;
                 }
                 if (ongoing == shot) {
                     shoot_pos(target, x, y);
+                    target->last_x = x;
+                    target->last_y = y;
                     free(prob_grid.data);
                     return true;
                 }

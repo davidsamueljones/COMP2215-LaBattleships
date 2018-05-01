@@ -21,10 +21,10 @@ typedef enum {
  * Structure holding state information for a player.
  */
 typedef struct {
-    grid_t grid; // Grid with ships placed and enemy shots
+    grid_t* grid; // Grid with ships placed and enemy shots
     int8_t last_x;
     int8_t last_y;
-    ship_t *ships;
+    ship_t* ships;
     uint8_t ship_count;
     bool cpu;
 } player_t;
@@ -32,14 +32,14 @@ typedef struct {
 
 /**
  * Generate a new player using a new grid and a copy of the provided ship list.
- * 
+ *
+ * @param  player     Pointer to player to update 
  * @param  width      Width of grid to generate
  * @param  height     Height of grid to generate
  * @param  ships      List of ships to copy to player
  * @param  ship_count Number of ships to place
- * @return            Generated player
  */
-player_t make_player(uint8_t width, uint8_t height, ship_t ships[], uint8_t ship_count);
+void make_player(player_t* player, uint8_t width, uint8_t height, ship_t ships[], uint8_t ship_count);
 
 /**
  * Free all memory used by player, this will stop the player being usable.
