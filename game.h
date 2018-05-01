@@ -37,7 +37,20 @@ void make_default_game(game_t* game);
  */
 void free_game(game_t* game);
 
+/**
+ * Get a pointer to the player who should be taking the next shot.
+ *  
+ * @param  game Game to check
+ * @return      Pointer to player in game
+ */
 player_t* get_current_player(game_t* game);
+
+/**
+ * Get a pointer to the player who should have taken the last shot.
+ * 
+ * @param  game Game to check
+ * @return      Pointer to player in game
+ */
 player_t* get_other_player(game_t* game);
 
 #endif // GAME_H
