@@ -1,12 +1,17 @@
+#include <string.h>
+
 #include "ui_drawing.h"
 
 #include "lafortuna/lcd/lcd.h"
 #include "lafortuna/drawing/drawing.h"
 
+#define DRAW_AREA_LEFT_MARGIN   (10)
+#define DRAW_AREA_RIGHT_MARGIN  (10)
+
 /* Define header and footer for external use */
 rectangle header;
 rectangle footer;
-
+rectangle draw_area;
 
 void init_ui_drawing(void) {
     header.left   = 0;
@@ -18,6 +23,11 @@ void init_ui_drawing(void) {
     footer.right  = display.width - 1;
     footer.top    = display.height - (FONT_HEIGHT + 14);
     footer.bottom = display.height;
+
+    draw_area.left = DRAW_AREA_LEFT_MARGIN;
+    draw_area.right = display.width - DRAW_AREA_RIGHT_MARGIN;
+    draw_area.top = header.bottom;
+    draw_area.bottom = footer.top;
 }
 
 
@@ -30,13 +40,16 @@ void draw_game_state(game_t* game, draw_props_t* grid_1_draw_props, draw_props_t
 
     write_current_player(get_cur_player_idx(game));
 
-    draw_grid(&playing->grid, grid_2_draw_props);
-    draw_ships(&playing->grid, playing->ships, playing->ship_count, grid_2_draw_props);
-    draw_shot_overlay(&playing->grid, grid_2_draw_props);
+    draw_title("YOUR SHOTS", grid_1_draw_props);
+    draw_grid(other->grid, grid_1_draw_props);
+    draw_ships(other->grid, other->ships, other->ship_count, grid_1_draw_props);
+    draw_shot_overlay(other->grid, grid_1_draw_props);
 
+    draw_title("YOUR SHIPS", grid_2_draw_props);
+    draw_grid(playing->grid, grid_2_draw_props);
+    draw_ships(playing->grid, playing->ships, playing->ship_count, grid_2_draw_props);
+    draw_shot_overlay(playing->grid, grid_2_draw_props);
 
-    draw_grid(&other->grid, grid_1_draw_props);
-    draw_shot_overlay(&other->grid, grid_1_draw_props);
 }
 
 
@@ -63,11 +76,11 @@ void write_current_player(uint8_t player) {
 
     switch (player) {
     case PLAYER_ONE:
-        str = "ONE";
+        str = ONE_PLAYER_STRING;
         display.foreground = PLAYER_ONE_COL;
         break;
     case PLAYER_TWO:
-        str = "TWO";
+        str = TWO_PLAYER_STRING;
         display.foreground = PLAYER_TWO_COL;
         break;
     }
@@ -78,15 +91,8 @@ void write_current_player(uint8_t player) {
     display.foreground = temp_fg;
 }
 
-
 void generate_two_grid_view(draw_props_t* grid_1, draw_props_t* grid_2, double weight) {
     uint16_t middle_split = 10;
-    uint16_t grid_margin = 10;
-
-    rectangle draw_area = {
-        .left = grid_margin,  .right = display.width - grid_margin,
-        .top = header.bottom, .bottom = footer.top
-    };
     uint16_t draw_width = draw_area.right - draw_area.left - middle_split;
     uint16_t draw_height = draw_area.bottom - draw_area.top;
 
@@ -105,13 +111,6 @@ void generate_two_grid_view(draw_props_t* grid_1, draw_props_t* grid_2, double w
 
 
 void generate_one_grid_view(draw_props_t* grid) {
-    uint16_t grid_margin = 10;
-
-    rectangle draw_area = {
-        .left = grid_margin,  .right = display.width - grid_margin,
-        .top = header.bottom, .bottom = footer.top
-    };
-    uint16_t draw_width = draw_area.right - draw_area.left;
     uint16_t draw_height = draw_area.bottom - draw_area.top;
 
     // Create Grid 1 (aligned left)
@@ -119,4 +118,29 @@ void generate_one_grid_view(draw_props_t* grid) {
     grid->height = grid->width;
     grid->x = (draw_area.right - grid->width) / 2;
     grid->y = draw_area.top + (draw_height - grid->height + TITLE_HEIGHT) / 2;
+}
+
+void draw_centred_string(char* text, rectangle* rec) {
+    uint8_t len = strlen(text);
+    uint8_t text_width = 0;
+    uint8_t line_width = 0;
+    uint8_t text_height = FONT_HEIGHT;
+    for (uint8_t i=0; i < len; i++) {
+        if (text[i] == '\n') {
+            if (line_width > text_width) {
+                text_width = line_width;
+            }
+            line_width = 0;
+            text_height += LINE_FEED_HEIGHT;
+        } else {
+            line_width += (FONT_WIDTH + 1);
+        }
+    }
+    if (line_width > text_width) {
+        text_width = line_width;
+    }
+
+    display.x = rec->left + (rec->right - rec->left - text_width) / 2;
+    display.y = rec->top + (rec->bottom - rec->top - text_height) / 2;
+    display_string_xy(text, display.x, display.y);
 }

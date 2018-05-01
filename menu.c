@@ -3,6 +3,7 @@
 
 #include "menu.h"
 #include "ui_drawing.h"
+#include "control.h"
 
 #include "lafortuna/os.h"
 #include "lafortuna/lcd/lcd.h"
@@ -11,14 +12,14 @@
 void handle_main_menu_selection(main_menu_option_t selection) {
     switch (selection) {
         case OnePlayer:
-            //play_battleships(false, true);
+            play_battleships(false, true);
             break;
         case TwoPlayerHotseat:
-            //play_battleships(false, false);
+            play_battleships(false, false);
             break;
         break;
         case BothAIs:
-            //play_battleships(true, true);
+            play_battleships(true, true);
             break;
     }
 }
@@ -131,30 +132,4 @@ void draw_menu_button(rectangle* rec, char* text, bool selected) {
     display.foreground = MESSAGE_BOX_FG;
     display.background = MESSAGE_BOX_BG;
     draw_centred_string(text, rec);
-}
-
-
-void draw_centred_string(char* text, rectangle* rec) {
-    uint8_t len = strlen(text);
-    uint8_t text_width = 0;
-    uint8_t line_width = 0;
-    uint8_t text_height = FONT_HEIGHT;
-    for (uint8_t i=0; i < len; i++) {
-        if (text[i] == '\n') {
-            if (line_width > text_width) {
-                text_width = line_width;
-            }
-            line_width = 0;
-            text_height += LINE_FEED_HEIGHT;
-        } else {
-            line_width += (FONT_WIDTH + 1);
-        }
-    }
-    if (line_width > text_width) {
-        text_width = line_width;
-    }
-
-    display.x = rec->left + (rec->right - rec->left - text_width) / 2;
-    display.y = rec->top + (rec->bottom - rec->top - text_height) / 2;
-    display_string_xy(text, display.x, display.y);
 }

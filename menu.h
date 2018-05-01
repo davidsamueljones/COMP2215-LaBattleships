@@ -46,12 +46,5 @@ void draw_main_menu(main_menu_option_t selection, bool clear);
  */
 void draw_menu_button(rectangle* rec, char* text, bool selected);
 
-/**
- * Draw a string central to a given rectangle. It will centre in both width and height, 
- * even when there are multiple lines. (TODO: Text is currently left-justified only)
- * @param text Text to draw
- * @param rec  Rectangle to use for positioning
- */
-void draw_centred_string(char* text, rectangle* rec);
 
 #endif // MENU_H

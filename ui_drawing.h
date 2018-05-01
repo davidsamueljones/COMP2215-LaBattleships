@@ -21,9 +21,15 @@
 #define MESSAGE_BOX_BG (0x2124)
 #define MESSAGE_BOX_FG (0xFFFF)
 
+#define ONE_PLAYER_STRING       ("One")
+#define ONE_PLAYER_STRING_UPPER ("ONE")
+
+#define TWO_PLAYER_STRING       ("Two")
+#define TWO_PLAYER_STRING_UPPER ("TWO")
+
 extern rectangle header;
 extern rectangle footer;
-
+extern rectangle draw_area;
 /**
  * Initialise UI drawing. This ensures sizing of elements such as the header and footer
  * adjust correctly to the screen.
@@ -65,5 +71,13 @@ void write_current_player(uint8_t player);
 void generate_two_grid_view(draw_props_t* grid_1, draw_props_t* grid_2, double weight);
 
 void generate_one_grid_view(draw_props_t* grid);
+
+/**
+ * Draw a string central to a given rectangle. It will centre in both width and height, 
+ * even when there are multiple lines. (TODO: Text is currently left-justified only)
+ * @param text Text to draw
+ * @param rec  Rectangle to use for positioning
+ */
+void draw_centred_string(char* text, rectangle* rec);
 
 #endif // UI_DRAWING_H
