@@ -53,4 +53,12 @@ player_t* get_current_player(game_t* game);
  */
 player_t* get_other_player(game_t* game);
 
+/**
+ * Get a pointer to the game's player referenced by the given index.
+ * 
+ * @param  game Game to check
+ * @return      Pointer to player in game
+ */
+player_t* get_player(game_t* game, uint8_t player_idx);
+
 #endif // GAME_H

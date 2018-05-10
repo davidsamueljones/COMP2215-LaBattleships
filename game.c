@@ -8,6 +8,12 @@
 #define DEFAULT_GRID_HEIGHT  (10)
 #define DEFAULT_SHIP_COUNT   (5)
 
+/** Global declarations of ship names */
+char* str_destroyer  = "Destroyer";
+char* str_submarine  = "Submarine";
+char* str_cruiser    = "Cruiser";
+char* str_battleship = "Battleship";
+char* str_carrier    = "Carrier";
 
 void make_default_game(game_t* game) {
     // Initialise game properties
@@ -16,11 +22,11 @@ void make_default_game(game_t* game) {
 
     uint8_t ship_count = 5;
     ship_t ships[DEFAULT_SHIP_COUNT] = {
-        {.name = "Destroyer",  .ref = 1, .length = 2, SHIP_DEFAULTS},
-        {.name = "Submarine",  .ref = 2, .length = 3, SHIP_DEFAULTS},
-        {.name = "Cruiser",    .ref = 3, .length = 3, SHIP_DEFAULTS},
-        {.name = "Battleship", .ref = 4, .length = 4, SHIP_DEFAULTS},
-        {.name = "Carrier",    .ref = 5, .length = 5, SHIP_DEFAULTS},
+        {.name = str_destroyer,  .ref = 1, .length = 2, SHIP_DEFAULTS},
+        {.name = str_submarine,  .ref = 2, .length = 3, SHIP_DEFAULTS},
+        {.name = str_cruiser,    .ref = 3, .length = 3, SHIP_DEFAULTS},
+        {.name = str_battleship, .ref = 4, .length = 4, SHIP_DEFAULTS},
+        {.name = str_carrier,    .ref = 5, .length = 5, SHIP_DEFAULTS},
     };
 
     // Initialise game
@@ -43,19 +49,26 @@ void free_game(game_t* game) {
 
 
 player_t* get_current_player(game_t* game) {
-    switch (get_cur_player_idx(game)) {
-    case (PLAYER_ONE):
-        return game->player_one;
-    case (PLAYER_TWO):
-        return game->player_two;
-    default:
-        return NULL;
-    }
+    return get_player(game, get_cur_player_idx(game));
 }
 
 
 player_t* get_other_player(game_t* game) {
-    switch (get_cur_player_idx(game)) {
+    uint8_t idx = get_cur_player_idx(game);
+    switch (idx) {
+    case (PLAYER_ONE):
+         idx = PLAYER_TWO;
+         break;
+    case (PLAYER_TWO):
+         idx = PLAYER_ONE;
+         break;
+    }
+    return get_player(game, idx);
+}
+
+
+player_t* get_player(game_t* game, uint8_t player_idx) {
+    switch (player_idx) {
     case (PLAYER_ONE):
         return game->player_two;
     case (PLAYER_TWO):
