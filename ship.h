@@ -29,7 +29,7 @@ typedef enum {
  * its current state.
  */
 typedef struct {
-    char* name;
+    const char* name;
     int8_t ref;
     int8_t x;
     int8_t y;

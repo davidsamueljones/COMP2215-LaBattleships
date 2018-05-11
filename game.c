@@ -9,11 +9,11 @@
 #define DEFAULT_SHIP_COUNT   (5)
 
 /** Global declarations of ship names */
-char* str_destroyer  = "Destroyer";
-char* str_submarine  = "Submarine";
-char* str_cruiser    = "Cruiser";
-char* str_battleship = "Battleship";
-char* str_carrier    = "Carrier";
+const char* str_destroyer  = "Destroyer";
+const char* str_submarine  = "Submarine";
+const char* str_cruiser    = "Cruiser";
+const char* str_battleship = "Battleship";
+const char* str_carrier    = "Carrier";
 
 void make_default_game(game_t* game) {
     // Initialise game properties
@@ -77,3 +77,15 @@ player_t* get_player(game_t* game, uint8_t player_idx) {
         return NULL;
     }
 }
+
+
+uint8_t get_player_idx(game_t* game, player_t* player) {
+    if (game->player_one == player) {
+        return PLAYER_ONE;
+    }
+    if (game->player_two == player) {
+        return PLAYER_TWO;
+    }
+    return -1;
+}
+

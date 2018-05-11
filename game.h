@@ -21,14 +21,12 @@ typedef struct {
     player_t* player_two;
 } game_t;
 
-
 /**
  * Update the current game with a copy of the defaults.
  * 
  * @param game Pointer to game to update
  */
 void make_default_game(game_t* game);
-
 
 /**
  * Free all memory used by a game, this will stop the game being usable.
@@ -60,5 +58,15 @@ player_t* get_other_player(game_t* game);
  * @return      Pointer to player in game
  */
 player_t* get_player(game_t* game, uint8_t player_idx);
+
+/**
+ * For the given player, find out what player index it is for the given game.
+ * This may be PLAYER_ONE, PLAYER_TWO or if the player does not belong to the game -1.
+ * 
+ * @param  game   Game to check for player
+ * @param  player Player to find
+ * @return        Index of player
+ */
+uint8_t get_player_idx(game_t* game, player_t* player);
 
 #endif // GAME_H
