@@ -21,11 +21,11 @@
 #define MESSAGE_BOX_BG (0x2124)
 #define MESSAGE_BOX_FG (0xFFFF)
 
-#define ONE_PLAYER_STRING       ("One")
-#define ONE_PLAYER_STRING_UPPER ("ONE")
+#define PLAYER_ONE_STR    "One"
+#define PLAYER_ONE_STR_UP "ONE"
 
-#define TWO_PLAYER_STRING       ("Two")
-#define TWO_PLAYER_STRING_UPPER ("TWO")
+#define PLAYER_TWO_STR    "Two"
+#define PLAYER_TWO_STR_UP "TWO"
 
 extern rectangle header;
 extern rectangle footer;
@@ -47,6 +47,11 @@ void init_ui_drawing(void);
  */
 void draw_game_state(game_t* game, draw_props_t* grid_1_draw_props, draw_props_t* grid_2_draw_props);
 
+void draw_finish_state(game_t* game, draw_props_t* grid_1_draw_props, draw_props_t* grid_2_draw_props);
+
+void draw_player_boards(draw_props_t* grid_1_draw_props, draw_props_t* grid_2_draw_props, 
+        player_t* left_player, player_t* right_player);
+
 /**
  * Draw a box for the header. Exceeds provided bounds by 1px South.
  * 
@@ -67,7 +72,9 @@ void draw_footer();
  * @param player Player index
  */
 void write_current_player(uint8_t player);
-
+void write_winner(uint8_t player);
+void write_player(uint8_t player);
+void write_current_turn(uint8_t turn);
 void generate_two_grid_view(draw_props_t* grid_1, draw_props_t* grid_2, double weight);
 
 void generate_one_grid_view(draw_props_t* grid);

@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 
 #include "ui_drawing.h"
 
@@ -33,25 +34,47 @@ void init_ui_drawing(void) {
 
 void draw_game_state(game_t* game, draw_props_t* grid_1_draw_props, draw_props_t* grid_2_draw_props) {
     player_t* playing = get_current_player(game);
-    player_t* other = get_other_player(game);
+    player_t* next = get_next_player(game);
 
     draw_header(header);
     draw_footer(footer);
 
-    write_current_player(get_cur_player_idx(game));
+    write_current_player(game->turn);
+    write_current_turn(game->shots / 2 + 1);
 
     draw_title("YOUR SHOTS", grid_1_draw_props);
-    draw_grid(other->grid, grid_1_draw_props);
-    draw_ships(other->grid, other->ships, other->ship_count, grid_1_draw_props);
-    draw_shot_overlay(other->grid, grid_1_draw_props);
-
     draw_title("YOUR SHIPS", grid_2_draw_props);
-    draw_grid(playing->grid, grid_2_draw_props);
-    draw_ships(playing->grid, playing->ships, playing->ship_count, grid_2_draw_props);
-    draw_shot_overlay(playing->grid, grid_2_draw_props);
-
+    draw_player_boards(grid_1_draw_props, grid_2_draw_props, next, playing);
 }
 
+void draw_finish_state(game_t* game, draw_props_t* grid_1_draw_props, draw_props_t* grid_2_draw_props) {
+    player_t* player_one = get_player(game, PLAYER_ONE);
+    player_t* player_two = get_player(game, PLAYER_TWO);
+
+
+    draw_header(header);
+    draw_footer(footer);
+
+    uint8_t winner = get_player_idx(game, get_next_player(game));
+    write_winner(winner);
+
+
+    draw_title("PLAYER " PLAYER_ONE_STR_UP "'S SHIPS", grid_1_draw_props);
+    draw_title("PLAYER " PLAYER_TWO_STR_UP "'S SHIPS", grid_2_draw_props);
+    draw_player_boards(grid_1_draw_props, grid_2_draw_props, player_two, player_one);
+}
+
+void draw_player_boards(draw_props_t* grid_1_draw_props, draw_props_t* grid_2_draw_props, 
+        player_t* left_player, player_t* right_player) {
+
+    draw_grid(left_player->grid, grid_1_draw_props);
+    draw_ships(left_player->grid, left_player->ships, left_player->ship_count, grid_1_draw_props);
+    draw_shot_overlay(left_player->grid, grid_1_draw_props);
+
+    draw_grid(right_player->grid, grid_2_draw_props);
+    draw_ships(right_player->grid, right_player->ships, right_player->ship_count, grid_2_draw_props);
+    draw_shot_overlay(right_player->grid, grid_2_draw_props);
+}
 
 void draw_header() {
     fill_rectangle(header, TITLE_BOX_BG);
@@ -64,31 +87,59 @@ void draw_footer() {
     stroke_line(footer.left, footer.top - 1, footer.right, footer.top - 1, MESSAGE_BOX_FG);
 }
 
+void write_current_turn(uint8_t turn) {
+    uint16_t temp_bg = display.background;
+    uint16_t temp_fg = display.foreground;
+    display.background = TITLE_BOX_BG;
+    display.foreground = TEXT_COL;
+    char buf[20];
+    sprintf(buf, "(Turn %d)", turn);
+    display_string_xy(buf, display.width - 60, 7);
+
+    display.background = temp_bg;
+    display.foreground = temp_fg;
+}
+
 
 void write_current_player(uint8_t player) {
-    char* str = "";
     uint16_t temp_bg = display.background;
     uint16_t temp_fg = display.foreground;
     display.background = TITLE_BOX_BG;
     display.foreground = TEXT_COL;
     display_string_xy("Current Turn: ", 10, 7);
+    write_player(player);
 
+    display.background = temp_bg;
+    display.foreground = temp_fg;
+}
 
+void write_winner(uint8_t player) {
+
+    uint16_t temp_bg = display.background;
+    uint16_t temp_fg = display.foreground;
+    display.background = TITLE_BOX_BG;
+    display.foreground = TEXT_COL;
+    display_string_xy("WINNER: ", 10, 7);
+    write_player(player);
+
+    display.background = temp_bg;
+    display.foreground = temp_fg;
+}
+
+void write_player(uint8_t player) {
+    char* str = "";
     switch (player) {
     case PLAYER_ONE:
-        str = ONE_PLAYER_STRING;
+        str = PLAYER_ONE_STR_UP;
         display.foreground = PLAYER_ONE_COL;
         break;
     case PLAYER_TWO:
-        str = TWO_PLAYER_STRING;
+        str = PLAYER_TWO_STR_UP;
         display.foreground = PLAYER_TWO_COL;
         break;
     }
     display_string("PLAYER ");
     display_string(str);
-
-    display.background = temp_bg;
-    display.foreground = temp_fg;
 }
 
 void generate_two_grid_view(draw_props_t* grid_1, draw_props_t* grid_2, double weight) {
