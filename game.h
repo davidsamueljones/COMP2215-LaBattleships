@@ -10,12 +10,11 @@
 #define PLAYER_ONE (1)
 #define PLAYER_TWO (2)
 
-#define get_cur_player_idx(game) ((game->shots % 2) + 1)
-
 /**
  * Structure holding state information for a game.
  */
 typedef struct {
+    uint8_t turn;
     uint8_t shots;
     player_t* player_one;
     player_t* player_two;
@@ -44,12 +43,12 @@ void free_game(game_t* game);
 player_t* get_current_player(game_t* game);
 
 /**
- * Get a pointer to the player who should have taken the last shot.
+ * Get a pointer to the player who should be taking the next shot.
  * 
  * @param  game Game to check
  * @return      Pointer to player in game
  */
-player_t* get_other_player(game_t* game);
+player_t* get_next_player(game_t* game);
 
 /**
  * Get a pointer to the game's player referenced by the given index.
@@ -68,5 +67,13 @@ player_t* get_player(game_t* game, uint8_t player_idx);
  * @return        Index of player
  */
 uint8_t get_player_idx(game_t* game, player_t* player);
+
+/**
+ * Get the index of the next player to play.
+ * 
+ * @param  game Game to check
+ * @return      Index of next player
+ */
+uint8_t next_player_idx(game_t* game);
 
 #endif // GAME_H

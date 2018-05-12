@@ -15,6 +15,7 @@ const char* str_cruiser    = "Cruiser";
 const char* str_battleship = "Battleship";
 const char* str_carrier    = "Carrier";
 
+
 void make_default_game(game_t* game) {
     // Initialise game properties
     uint8_t width  = DEFAULT_GRID_WIDTH;
@@ -30,6 +31,7 @@ void make_default_game(game_t* game) {
     };
 
     // Initialise game
+    game->turn = PLAYER_ONE;
     game->shots = 0;
     game->player_one = malloc(sizeof(player_t));
     game->player_two = malloc(sizeof(player_t));
@@ -48,37 +50,6 @@ void free_game(game_t* game) {
 }
 
 
-player_t* get_current_player(game_t* game) {
-    return get_player(game, get_cur_player_idx(game));
-}
-
-
-player_t* get_other_player(game_t* game) {
-    uint8_t idx = get_cur_player_idx(game);
-    switch (idx) {
-    case (PLAYER_ONE):
-         idx = PLAYER_TWO;
-         break;
-    case (PLAYER_TWO):
-         idx = PLAYER_ONE;
-         break;
-    }
-    return get_player(game, idx);
-}
-
-
-player_t* get_player(game_t* game, uint8_t player_idx) {
-    switch (player_idx) {
-    case (PLAYER_ONE):
-        return game->player_two;
-    case (PLAYER_TWO):
-        return game->player_one;
-    default:
-        return NULL;
-    }
-}
-
-
 uint8_t get_player_idx(game_t* game, player_t* player) {
     if (game->player_one == player) {
         return PLAYER_ONE;
@@ -89,3 +60,36 @@ uint8_t get_player_idx(game_t* game, player_t* player) {
     return -1;
 }
 
+
+uint8_t next_player_idx(game_t* game) {
+    switch (game->turn) {
+    case (PLAYER_ONE):
+        return PLAYER_TWO;
+    case (PLAYER_TWO):
+        return PLAYER_ONE;
+    default:
+        return -1;
+    }
+}
+
+
+player_t* get_player(game_t* game, uint8_t player_idx) {
+    switch (player_idx) {
+    case (PLAYER_ONE):
+        return game->player_one;
+    case (PLAYER_TWO):
+        return game->player_two;
+    default:
+        return NULL;
+    }
+}
+
+
+player_t* get_current_player(game_t* game) {
+    return get_player(game, game->turn);
+}
+
+
+player_t* get_next_player(game_t* game) {
+    return get_player(game, next_player_idx(game));
+}
