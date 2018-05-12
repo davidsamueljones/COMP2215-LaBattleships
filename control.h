@@ -36,13 +36,41 @@ void placement_phase(game_t* game, uint8_t player_idx);
 void shooting_phase(game_t* game);
 
 /**
+ * Display the finish screen, waiting for user to press centre button before progressing.
+ * @param game Game that has finished
+ */
+void finish_phase(game_t* game);
+
+/**
+ * For the given game return the last action that has occurred. If the shot has occurred for the current turn
+ * the action is this shot from the perspective of the current player. If the shot has not occurred for the
+ * current turn the action is the last player's shot from the perspective of the current player.
+ * 
+ * @param  buf  Pre-allocated buffer to fill with message
+ * @param  game Game for which to check
+ * @return      Whether an action message has been allocated
+ */
+bool get_last_action_message(char* buf, game_t* game);
+
+/**
+ * Display the given message in the footer, if the wait flag is set the method will not exit
+ * until the centre button is pressed. This will be indicated in an appended message.
+ * The message will always centre in both vertical and horizontal. If only the wait message is required
+ * NULL should be passed for the message.
+ * 
+ * @param message Message to display, can be NULL
+ * @param wait    Whether to wait
+ */
+void show_footer_message(char* message, bool wait);
+
+/**
  * Draw a separation screen that indicates who the next player is. Display the given message.
  * Progress can be made with a centre button press at which point the display is cleared.
  * 
  * @param message    Message to display
  * @param player_idx The next player
  */
-void draw_next_player_screen(char* message, uint8_t player_idx);
+void show_next_player_screen(char* message, uint8_t player_idx);
 
 /** 
  * Get a user input referencing which position to target with the shot. The selected position is set

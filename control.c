@@ -25,7 +25,7 @@ void play_battleships(bool player_one_cpu, bool player_two_cpu) {
     shooting_phase(&game);
 
     // Game over
-    wait_for_press(SWC);
+    finish_phase(&game);
     free_game(&game);
 }
 
@@ -52,7 +52,7 @@ void placement_phase(game_t* game, uint8_t player_idx) {
 
     // Two player game so must display separation screen
     if (!game->player_one->cpu && !game->player_two->cpu) {
-        draw_next_player_screen("Place your ships", player_idx);
+        show_next_player_screen("Place your ships", player_idx);
     }
 
     // Wait for ship placement
@@ -60,6 +60,14 @@ void placement_phase(game_t* game, uint8_t player_idx) {
     generate_one_grid_view(&draw_props);
     draw_props.ships = true; 
     clear_screen();
+    draw_header();
+    write_current_player(player_idx);
+    draw_footer();
+    uint8_t temp = display.background;
+    display.background = MESSAGE_BOX_BG;
+    draw_centred_string("Arrows: Movement - Centre: Rotate\n", &footer);
+    draw_centred_string("\nLong Press Centre: Place", &footer);
+    display.background = temp;
     draw_title("SHIP PLACER", &draw_props);
     draw_grid(player->grid, &draw_props);
     player_ships_placer(player, &draw_props);
@@ -67,7 +75,6 @@ void placement_phase(game_t* game, uint8_t player_idx) {
 
 
 void shooting_phase(game_t* game) {
-    
     // Split view so LHS is shooting area, RHS is shots against player
     draw_props_t grid_1_draw_props;
     draw_props_t grid_2_draw_props;   
@@ -78,49 +85,130 @@ void shooting_phase(game_t* game) {
     clear_screen();
     while (!is_player_destroyed(game->player_one) && !is_player_destroyed(game->player_two)) {
         player_t* cur_player = get_current_player(game);
-        player_t* other_player = get_other_player(game);
-
+        player_t* enemy_player = get_next_player(game);
 
         // Two player game so must display separation screen 
         if (!game->player_one->cpu && !game->player_two->cpu) {
-            draw_next_player_screen("Take your shot", get_cur_player_idx(game));
+            show_next_player_screen("Take your shot", game->turn);
         }
 
-        // Only redraw if not a CPU turn (unless both are CPUs)
-        if (!cur_player->cpu  || other_player->cpu) {
+        // Require redraw if both CPU's, if both are not CPUs, or first shot
+        bool full_redraw = (cur_player->cpu && enemy_player->cpu) ||
+            (!cur_player->cpu && !enemy_player->cpu) || 
+            (game->shots == 0);
+        if (full_redraw) {
             draw_game_state(game, &grid_1_draw_props, &grid_2_draw_props);
         }
-    
+
+        // Only draw updates if not a CPU turn (unless both are CPUs)
+        bool draw_updates = !cur_player->cpu || enemy_player->cpu;
+        if (draw_updates) {
+            write_current_turn(game->shots / 2 + 1);
+            draw_shot_overlay(cur_player->grid, &grid_2_draw_props);
+            char buf[50];
+            bool message = get_last_action_message(buf, game);
+            show_footer_message(message ? buf : NULL, false);
+        }
+
         // Make shot
         if (cur_player->cpu) {
-            make_weighted_shot(other_player);
+            make_weighted_shot(enemy_player);
         } else {   
-            shot_position_selector(other_player, &grid_1_draw_props);
-            shoot_pos(other_player, other_player->last_x, other_player->last_y);
+            shot_position_selector(enemy_player, &grid_1_draw_props);
+            shoot_pos(enemy_player, enemy_player->last_x, enemy_player->last_y);
         }
         game->shots++;
-    }
 
+        // Wait if not a CPU turn (unless both are CPUs)
+        if (!cur_player->cpu  || enemy_player->cpu) {
+            draw_shot_overlay(enemy_player->grid, &grid_1_draw_props);
+            char buf[50];
+            bool message = get_last_action_message(buf, game);
+            show_footer_message(message ? buf : NULL, !cur_player->cpu);
+        }
+
+        // Increment turn
+        game->turn = next_player_idx(game);
+    }
     draw_game_state(game, &grid_1_draw_props, &grid_2_draw_props);
 }
 
 
-void draw_next_player_screen(char* message, uint8_t player_idx) {
+void finish_phase(game_t* game) {
+    clear_screen();
+    draw_props_t grid_1_draw_props;
+    draw_props_t grid_2_draw_props;   
+    generate_two_grid_view(&grid_1_draw_props, &grid_2_draw_props, 0.5);
+    grid_1_draw_props.ships = true;
+    grid_2_draw_props.ships = true;
+    draw_finish_state(game, &grid_1_draw_props, &grid_2_draw_props);
+    show_footer_message(NULL, true);
+}
+
+
+bool get_last_action_message(char* buf, game_t* game) {
+    uint8_t last_shooter_idx = game->shots % 2 + 1;
+    player_t* last_shooter = get_player(game, last_shooter_idx);
+    if (game->shots == 0) {
+        return false;
+    }
+    g_data data = get_grid_data(last_shooter->grid, 
+        last_shooter->last_x, last_shooter->last_y);
+    bool hit = IS_HIT(data);
+    bool destroy = data & DESTROY_POS;
+    const char* ship = last_shooter->ships[(data & POS_DATA) - 1].name;
+    if (game->turn == last_shooter_idx) {
+        if (!hit) {
+            sprintf(buf, "The enemy missed!");
+        } else {
+            sprintf(buf, "The enemy %s your '%s'", destroy ? "destroyed" : "hit", ship);
+        }
+    } else {
+        if (destroy) {
+            sprintf(buf, "You destroyed the enemy '%s'", ship);
+        } else {
+            sprintf(buf, hit ? "Hit!" : "Miss!");
+        }
+    }
+    return true;
+}
+
+
+void show_footer_message(char* message, bool wait) {
+    uint8_t temp = display.background;
+    display.background = MESSAGE_BOX_BG;
+    draw_footer();
+    char buf[50];
+    if (message) {
+        sprintf(buf, "%s%s", message, wait ? "\n" : "");
+        draw_centred_string(buf, &footer);
+    }
+
+    if (wait) {
+        sprintf(buf, "%sPress 'Centre' to continue...",  message ? "\n" : "");
+        draw_centred_string(buf, &footer);
+        wait_for_press(SWC);
+    }
+    display.background = temp;
+}
+
+
+void show_next_player_screen(char* message, uint8_t player_idx) {
     clear_screen();
 
     char buf[50];
     char* player_str = "";
     switch (player_idx) {
     case PLAYER_ONE:
-        player_str = ONE_PLAYER_STRING_UPPER;
+        player_str = PLAYER_ONE_STR_UP;
         break;
     case PLAYER_TWO:
-        player_str = TWO_PLAYER_STRING_UPPER;
+        player_str = PLAYER_TWO_STR_UP;
         break;
     }
     sprintf(buf, "PLAYER %s: %s\n", player_str, message);
     draw_centred_string(buf, &draw_area);
-    sprintf(buf, "\nPress 'Centre Key' to continue...");
+    sprintf(buf, "\nPress 'Centre' to continue...");
     draw_centred_string(buf, &draw_area);
     wait_for_press(SWC);
     clear_screen();
@@ -231,7 +319,6 @@ void player_ship_placer(player_t* player, ship_t* cur_ship, draw_props_t* draw_p
 }
 
 
-
 void wait_for_press(uint8_t sw) {
     while (true) {
         if (get_switch_short(_BV(sw))) {
@@ -239,7 +326,6 @@ void wait_for_press(uint8_t sw) {
         }
     }
 }
-
 
 
 dir_t get_move_dir(void) {
