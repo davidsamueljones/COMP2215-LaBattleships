@@ -52,7 +52,6 @@ shot_res_t shoot_pos(player_t* target, int8_t x, int8_t y) {
     } else {
         // Mark shot
         mark_shot(target->grid, x, y);
-
         if (data != 0) {
             // Do ship hit behaviour
             uint8_t idx = data - 1;
@@ -76,6 +75,5 @@ shot_res_t shoot_pos(player_t* target, int8_t x, int8_t y) {
         }
        
     }
-    printf("\n");
     return ret_code;
 }
